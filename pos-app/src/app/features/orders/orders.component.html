@@ -1,0 +1,163 @@
+<div class="p-6 h-[calc(100vh-80px)] overflow-y-auto">
+  <h1 class="text-2xl font-bold mb-4">Orders</h1>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-4 text-gray-500">
+    Loading orders...
+  </div>
+
+  <div class="overflow-x-auto" *ngIf="!loading">
+    <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-100 text-left">
+        <tr>
+          <th class="px-4 py-3 border-b">Order ID</th>
+          <th class="px-4 py-3 border-b">Source</th>
+          <th class="px-4 py-3 border-b">Items</th>
+          <th class="px-4 py-3 border-b">Total</th>
+          <th class="px-4 py-3 border-b">Status</th>
+          <th class="px-4 py-3 border-b">Customer</th>
+          <th class="px-4 py-3 border-b">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let order of orders" class="border-b hover:bg-gray-50">
+
+          <td class="px-4 py-3 font-mono text-sm">{{ order.id }}</td>
+
+          <td class="px-4 py-3 capitalize">
+            <span
+              class="px-2 py-1 text-xs font-semibold rounded"
+              [class.bg-blue-100]="order.source === 'online'"
+              [class.text-blue-600]="order.source === 'online'"
+              [class.bg-green-100]="order.source === 'in-store'"
+              [class.text-green-600]="order.source === 'in-store'"
+            >
+              {{ order.source }}
+            </span>
+          </td>
+          <td class="px-4 py-3">
+
+            <!-- Show first item -->
+            <div class="text-sm">
+              {{ order.items[0]?.name }} × {{ order.items[0]?.qty }}
+            </div>
+
+            <!-- Show remaining count -->
+            <div *ngIf="order.items.length > 1" class="text-xs text-gray-500">
+              +{{ order.items.length - 1 }} more
+            </div>
+
+            <!-- View all items button -->
+            <button
+              class="mt-1 text-blue-600 text-xs"
+              (click)="openItemsModal(order)"
+            >
+              View Items
+            </button>
+
+          </td>
+
+          <td class="px-4 py-3 font-semibold">
+            ${{ order.total }}
+          </td>
+
+          <td class="px-4 py-3">
+            <span
+              class="px-2 py-1 text-xs rounded font-semibold"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-700': order.status === 'Pending',
+                'bg-blue-100 text-blue-700': order.status === 'InProgress',
+                'bg-purple-100 text-purple-700': order.status === 'Ready',
+                'bg-green-100 text-green-700': order.status === 'Completed'
+              }"
+            >
+              {{ order.status }}
+            </span>
+          </td>
+
+          <td class="px-4 py-3">
+            {{ order.customerName || '-' }}
+          </td>
+
+          <!-- Dropdown with type-safe value extraction -->
+          <td class="px-4 py-3">
+            <select
+              class="border rounded px-2 py-1 text-sm"
+              [disabled]="updatingId === order.id"
+              (change)="updateStatus(order, extractValue($event))"
+            >
+              <option
+                *ngFor="let s of statuses"
+                [selected]="order.status === s"
+                [value]="s"
+              >
+                {{ s }}
+              </option>
+            </select>
+
+            <span *ngIf="updatingId === order.id" class="ml-2 text-xs text-gray-500">
+              Updating...
+            </span>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div
+  *ngIf="showItemsModal"
+  class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
+>
+  <!-- Modal Card -->
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">Order Items</h2>
+      <button
+        class="text-gray-500 hover:text-gray-800"
+        (click)="closeItemsModal()"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Item List (Scrollable) -->
+    <div class="max-h-80 overflow-y-auto pr-2 space-y-4">
+
+      <div
+        *ngFor="let item of modalItems"
+        class="flex items-center gap-4 border rounded-lg p-3 shadow-sm hover:bg-gray-50 transition"
+      >
+        <!-- Item Image -->
+        <img
+          [src]="item.image"
+          alt="image"
+          class="w-16 h-16 rounded-lg object-cover border"
+        />
+
+        <!-- Item Info -->
+        <div class="flex-1">
+          <div class="font-semibold">{{ item.name }}</div>
+          <div class="text-sm text-gray-600">Qty: {{ item.qty }}</div>
+          <div class="text-sm text-gray-600">Price: ${{ item.price }}</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <button
+      class="mt-5 w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+      (click)="closeItemsModal()"
+    >
+      Close
+    </button>
+
+  </div>
+</div>
+

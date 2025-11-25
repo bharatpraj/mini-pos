@@ -1,0 +1,32 @@
+<!-- footer.component.html -->
+<footer class="bg-slate-900 text-slate-200">
+  <div class="container mx-auto px-4 md:px-6 lg:px-8 py-6">
+    <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a routerLink="/" class="logo-font text-2xl font-semibold tracking-tight text-white hover:opacity-95">
+          Online Ordering App
+        </a>
+        <span class="hidden sm:inline-block text-slate-400 text-sm">— Explore now</span>
+      </div>
+
+      <div class="text-center md:text-right">
+        <p class="text-sm text-slate-400">&copy; {{ today | date: 'yyyy' }} Online Ordering App 2025</p>
+        <p class="text-xs text-slate-500 mt-1">v1.0 · <a routerLink="/privacy" class="underline">Privacy</a> · <a routerLink="/terms" class="underline">Terms</a></p>
+      </div>
+    </div>
+
+    <div class="mt-4 border-t border-slate-800 pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <div class="flex items-center gap-4">
+        <span class="sr-only">Company</span>
+        <p>Made with ❤️ for retail & hospitality</p>
+      </div>
+
+      <div class="flex gap-3 items-center">
+        <a href="mailto:support@onlineorderingapp.example" class="hover:underline">support@onlineorderingapp.example</a>
+        <span class="hidden sm:inline">·</span>
+        <a href="tel:+1234567890" class="hover:underline">+1 (234) 567-890</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
